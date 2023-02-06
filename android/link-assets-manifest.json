@@ -1,0 +1,97 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/asset/font/AntDesign.ttf",
+      "sha1": "4e77868439280fb434d4697c7b911271406c81f3"
+    },
+    {
+      "path": "src/asset/font/Entypo.ttf",
+      "sha1": "12b5670eb178138f77285d5f2c246d3cc5fa67d6"
+    },
+    {
+      "path": "src/asset/font/EvilIcons.ttf",
+      "sha1": "91d377ea3cf47490b256c2ed081704a7dabdae0c"
+    },
+    {
+      "path": "src/asset/font/Feather.ttf",
+      "sha1": "e6604258b1ced5efd51360875d782fca65381d47"
+    },
+    {
+      "path": "src/asset/font/FontAwesome.ttf",
+      "sha1": "13b1eab65a983c7a73bc7997c479d66943f7c6cb"
+    },
+    {
+      "path": "src/asset/font/FontAwesome5_Brands.ttf",
+      "sha1": "3fa2d67cef22da5c3f3eb5730c6afbd6fecf0372"
+    },
+    {
+      "path": "src/asset/font/FontAwesome5_Regular.ttf",
+      "sha1": "7d849a3981a716e2ba4a84634bc57d0b8054a6a3"
+    },
+    {
+      "path": "src/asset/font/FontAwesome5_Solid.ttf",
+      "sha1": "c1b9fae262f42868c075ac865a8ab34920e20a2c"
+    },
+    {
+      "path": "src/asset/font/Fontisto.ttf",
+      "sha1": "c090a3ec96a3f1bb9b615c2f3f204ce0dcdcdbc3"
+    },
+    {
+      "path": "src/asset/font/Foundation.ttf",
+      "sha1": "4b2bce6c792493a4a5716b6fec2dbefe89492c3f"
+    },
+    {
+      "path": "src/asset/font/Ionicons.ttf",
+      "sha1": "b5281fbfa43129abc3e412dd938cfcf0b77de999"
+    },
+    {
+      "path": "src/asset/font/MaterialCommunityIcons.ttf",
+      "sha1": "4c2a838b00dbb5e8bb1b368fce0de534e8eb241c"
+    },
+    {
+      "path": "src/asset/font/MaterialIcons.ttf",
+      "sha1": "1943803d652750c8ec60415f1e57401c70e72d25"
+    },
+    {
+      "path": "src/asset/font/Octicons.ttf",
+      "sha1": "56acefc0731f35ee23b195b1c8cb5fa94a0db97b"
+    },
+    {
+      "path": "src/asset/font/SimpleLineIcons.ttf",
+      "sha1": "9ffb81a5a11112e292f2cc323e98486bad597599"
+    },
+    {
+      "path": "src/asset/font/Zocial.ttf",
+      "sha1": "6a48a962b06cc3acbdfd61df0d9a34744eea5e8d"
+    },
+    {
+      "path": "src/asset/img/favicon.ico",
+      "sha1": "b218f2891a3abd7769d48ebc5109088f17c9fd8f"
+    },
+    {
+      "path": "src/asset/img/fusion-transp.png",
+      "sha1": "1b7898bade190e777ce198e2472069534304764f"
+    },
+    {
+      "path": "src/asset/img/logo.gif",
+      "sha1": "7d63966347209fb10def5dc521e35228c2b41a4d"
+    },
+    {
+      "path": "src/asset/img/logo.jpg",
+      "sha1": "164675a31ad1995116260ec8b5fb4da80420b98a"
+    },
+    {
+      "path": "src/asset/img/logo192.png",
+      "sha1": "1b7898bade190e777ce198e2472069534304764f"
+    },
+    {
+      "path": "src/asset/img/logo512.png",
+      "sha1": "1b7898bade190e777ce198e2472069534304764f"
+    },
+    {
+      "path": "src/asset/img/white.png",
+      "sha1": "a1f3f153ea77b0eb08532f0c5f682843e4ffae3b"
+    }
+  ]
+}
