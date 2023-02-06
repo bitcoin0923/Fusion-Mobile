@@ -54,7 +54,7 @@ export default function AlarmsScreen({navigation}) {
         setAnimating(false);
         if(res.success)
         {
-            setAlarmList([]);
+            refresh()
         }
         else{
             ToastAndroid.showWithGravity('Messages error: ' + JSON.stringify(res.error), ToastAndroid.SHORT, ToastAndroid.CENTER);

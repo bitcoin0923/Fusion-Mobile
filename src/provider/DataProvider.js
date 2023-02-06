@@ -139,7 +139,7 @@ export const DataProvider = ({ children }) => {
                 channelId: "fusion-normal-channel-0113", // (required)
                 channelName: "normal channel", // (required)
                 channelDescription: "A normal channel to categorise your notifications", // (optional) default: undefined.
-                playSound: true, // (optional) default: true
+                playSound: user.sound_enabled, // (optional) default: true
                 soundName: "normal.wav", // (optional) See `soundName` parameter of `localNotification` function
                 importance: Importance.DEFAULT, // (optional) default: Importance.HIGH. Int value of the Android notification importance
                 vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
@@ -152,7 +152,7 @@ export const DataProvider = ({ children }) => {
                 channelId: "fusion-high-channel-0113", // (required)
                 channelName: "high channel", // (required)
                 channelDescription: "A high channel to categorise your notifications", // (optional) default: undefined.
-                playSound: true, // (optional) default: true
+                playSound: user.sound_enabled, // (optional) default: true
                 soundName: "priority.wav", // (optional) See `soundName` parameter of `localNotification` function
                 importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
                 vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.import { getMsgList } from './../api/getMsgList';
