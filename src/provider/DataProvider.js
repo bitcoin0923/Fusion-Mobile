@@ -196,7 +196,7 @@ export const DataProvider = ({ children }) => {
                 repeatType: 'time',
                 repeatTime: 30 * 1000,
                 showFlag: 'false', 
-                hasPermission: user.privileges.messaging && user.privileges.manage_alarms && user.webpush_alarm_enable ? 'true' : 'false'
+                hasPermission: 'true'
             });
         }
         else {
