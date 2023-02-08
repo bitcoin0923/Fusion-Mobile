@@ -73,11 +73,10 @@ export const DataProvider = ({ children }) => {
         
         getSettingsOnce();
 
-        
-        
     }, [])
-
+    
     useEffect(() => {
+        
         const initPushNotification = () => {
             PushNotification.configure({
                 // onNotification is called when a notification is to be emitted
@@ -130,41 +129,14 @@ export const DataProvider = ({ children }) => {
                 popInitialNotification: true,
                 requestPermissions: Platform.OS === 'ios'
             });
+            restartNotificationSchedule();
             
-            PushNotification.deleteChannel("fusion-normal-channel-0113");
-            PushNotification.deleteChannel("fusion-high-channel-0113");
-    
-            PushNotification.createChannel(
-            {
-                channelId: "fusion-normal-channel-0113", // (required)
-                channelName: "normal channel", // (required)
-                channelDescription: "A normal channel to categorise your notifications", // (optional) default: undefined.
-                playSound: user.sound_enabled, // (optional) default: true
-                soundName: "normal.wav", // (optional) See `soundName` parameter of `localNotification` function
-                importance: Importance.DEFAULT, // (optional) default: Importance.HIGH. Int value of the Android notification importance
-                vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
-            },
-            (created) => console.log(`create normal Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
-            );
-            
-            PushNotification.createChannel(
-                {
-                channelId: "fusion-high-channel-0113", // (required)
-                channelName: "high channel", // (required)
-                channelDescription: "A high channel to categorise your notifications", // (optional) default: undefined.
-                playSound: user.sound_enabled, // (optional) default: true
-                soundName: "priority.wav", // (optional) See `soundName` parameter of `localNotification` function
-                importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
-                vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.import { getMsgList } from './../api/getMsgList';
-
-                },
-                (created) => console.log(`create hight Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
-                );
-                
         }
         if(userToken != ''){
+            
             initPushNotification();
             console.log("userToken:", userToken);
+            
             if(!user.privileges.messaging){
                 ToastAndroid.showWithGravity('Messages: Permission Denied', ToastAndroid.SHORT, ToastAndroid.CENTER);
                 RootNavigation.navigationRef.current?.resetRoot({
@@ -179,25 +151,6 @@ export const DataProvider = ({ children }) => {
                 })
             }
             
-            PushNotification.cancelAllLocalNotifications();
-            PushNotification.localNotificationSchedule({
-                largeIcon: "ic_notification",
-                channelId: 'fusion-normal-channel-0113',
-                message: 'new message',
-                title: 'fusion',
-                serverurl,
-                userToken,
-                vibrate: settings.vibrateOnNewMsg,
-                playSound: settings.playSoundOnNewMsg && user.sound_enabled,
-                soundName: 'normal.wav',
-                soundNameHigh: 'priority.wav',
-                soundNameNormal: 'normal.wav',
-                date: new Date(Date.now() + 5 * 1000), // in 60 secs
-                repeatType: 'time',
-                repeatTime: 30 * 1000,
-                showFlag: 'false', 
-                hasPermission: 'true'
-            });
         }
         else {
             if(!checkRemember)
@@ -252,7 +205,57 @@ export const DataProvider = ({ children }) => {
         refreshOnce();
     }, [msgList])
     
-    
+    useEffect(() => {
+        if(userToken != ''){
+            restartNotificationSchedule();
+        }
+    }, [settings]);
+
+    const restartNotificationSchedule = () => {
+        PushNotification.deleteChannel("fusion-normal-channel-0113");
+        PushNotification.deleteChannel("fusion-high-channel-0113");
+
+        PushNotification.createChannel(
+        {
+            channelId: "fusion-normal-channel-0113", // (required)
+            channelName: "Normal channel", // (required)
+            channelDescription: "A normal channel to categorise your notifications", // (optional) default: undefined.
+            playSound: user.sound_enabled && settings.playSoundOnNewMsg, // (optional) default: true
+            soundName: "normal.wav", // (optional) See `soundName` parameter of `localNotification` function
+            importance: Importance.DEFAULT, // (optional) default: Importance.HIGH. Int value of the Android notification importance
+            vibrate: settings.vibrateOnNewMsg, // (optional) default: true. Creates the default vibration pattern if true.
+        },
+        (created) => console.log(`create normal Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+        );
+        
+        PushNotification.createChannel(
+        {
+            channelId: "fusion-high-channel-0113", // (required)
+            channelName: "High channel", // (required)
+            channelDescription: "A high channel to categorise your notifications", // (optional) default: undefined.
+            playSound: user.sound_enabled && settings.playSoundOnNewMsg, // (optional) default: true
+            soundName: "priority.wav", // (optional) See `soundName` parameter of `localNotification` function
+            importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
+            vibrate: settings.vibrateOnNewMsg, // (optional) default: true. Creates the default vibration pattern if true.import { getMsgList } from './../api/getMsgList';
+
+            },
+            (created) => console.log(`create hight Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+        );
+        PushNotification.cancelAllLocalNotifications();
+        PushNotification.localNotificationSchedule({
+            largeIcon: "ic_notification",
+            channelId: 'fusion-normal-channel-0113',
+            message: 'new message',
+            title: 'xyz',
+            serverurl,
+            userToken,
+            date: new Date(Date.now() + 5 * 1000), // in 5 secs
+            repeatType: 'time',
+            repeatTime: 30 * 1000,
+        });
+            
+    }
+
     const store = {
         userToken: [ userToken, setUserToken ],
         msgList: [ msgList, setMsgList ],
