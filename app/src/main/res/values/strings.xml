@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Fusion Mobile</string>
+    <string name="default_notification_channel_id">fusion-channel-0113</string>
+</resources>
