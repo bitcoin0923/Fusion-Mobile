@@ -1,4 +1,4 @@
-package com.fusion.newarchitecture.components;
+package com.fusionalarm.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

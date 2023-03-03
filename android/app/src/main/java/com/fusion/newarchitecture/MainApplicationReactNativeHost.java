@@ -1,4 +1,4 @@
-package com.fusion.newarchitecture;
+package com.fusionalarm.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.fusion.BuildConfig;
-import com.fusion.newarchitecture.components.MainComponentsRegistry;
-import com.fusion.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.fusionalarm.BuildConfig;
+import com.fusionalarm.newarchitecture.components.MainComponentsRegistry;
+import com.fusionalarm.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

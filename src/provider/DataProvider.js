@@ -21,11 +21,7 @@ export const DataProvider = ({ children }) => {
     const [checkRemember, setCheckRemember] = useState(true);
     const [instance, setInstance] = useState('');
     const [settings, setSettings] = useState({
-        maxMessages: '10',
-        detectPhoneNumber: false,
-        playSoundOnNewMsg: true,
-        vibrateOnNewMsg: true,
-        overrideSilentOnPriority: false
+        maxMessages: '10'
     });
     useEffect(() => {
         const getSettingsOnce = async () => {
@@ -100,7 +96,7 @@ export const DataProvider = ({ children }) => {
                                 })
                             }
                         }
-                    }else{
+                    }else if(notification.actionType == 'active_alarm'){
                         if(userToken != ''){
                             if(!user.privileges.manage_alarms){
                                 ToastAndroid.showWithGravity('Alarms: Permission Denied', ToastAndroid.SHORT, ToastAndroid.CENTER);
@@ -130,41 +126,7 @@ export const DataProvider = ({ children }) => {
                 requestPermissions: Platform.OS === 'ios'
             });
 
-            // PushNotification.deleteChannel("fusion-sound-normal-0113");
-            // PushNotification.deleteChannel("fusion-sound-priority-0113");
-            // PushNotification.deleteChannel("fusion-mute-0113");
             
-            PushNotification.createChannel(
-            {
-                channelId: "fusion-sound-normal-0113", // (required)
-                channelName: "Normal Sound Channel", // (required)
-                channelDescription: "A normal sound channel", // (optional) default: undefined.
-                soundName: "normal.wav", // (optional) See `soundName` parameter of `localNotification` function
-                vibrate: settings.vibrateOnNewMsg, // (optional) default: true. Creates the default vibration pattern if true.
-            },
-            (created) => console.log(`create normal Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
-            );
-            PushNotification.createChannel(
-            {
-                channelId: "fusion-sound-priority-0113", // (required)
-                channelName: "Priority Sound Channel", // (required)
-                channelDescription: "A priority sound channel", // (optional) default: undefined.
-                soundName: "priority.wav", // (optional) See `soundName` parameter of `localNotification` function
-                vibrate: settings.vibrateOnNewMsg, // (optional) default: true. Creates the default vibration pattern if true
-                },
-                (created) => console.log(`create high Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
-            );
-            PushNotification.createChannel(
-            {
-                channelId: "fusion-mute-0113", // (required)
-                channelName: "No Sound Channel", // (required)
-                channelDescription: "A no sound channel", // (optional) default: undefined.
-                importance: Importance.LOW,
-                playSound: false,
-                vibrate: settings.vibrateOnNewMsg, // (optional) default: true. Creates the default vibration pattern if true
-                },
-                (created) => console.log(`create mute Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
-            );
 
             restartNotificationSchedule();
             
@@ -246,31 +208,79 @@ export const DataProvider = ({ children }) => {
         if(userToken != ''){
             restartNotificationSchedule();
         }
-    }, [settings]);
+    }, [settings])
 
     const restartNotificationSchedule = () => {
-        
+
         PushNotification.cancelAllLocalNotifications();
+        
+        PushNotification.deleteChannel("fusion-sound-normal-0113");
+        PushNotification.deleteChannel("fusion-sound-priority-0113");
+        PushNotification.deleteChannel("fusion-mute-0113");
+        
+        PushNotification.createChannel(
+        {
+            channelId: "fusion-sound-normal-0113", // (required)
+            channelName: "Normal Sound Channel", // (required)
+            channelDescription: "A normal sound channel", // (optional) default: undefined.
+            soundName: "normal.wav", // (optional) See `soundName` parameter of `localNotification` function
+        },
+        (created) => console.log(`create normal Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+        );
+        PushNotification.createChannel(
+        {
+            channelId: "fusion-sound-priority-0113", // (required)
+            channelName: "Priority Sound Channel", // (required)
+            channelDescription: "A priority sound channel", // (optional) default: undefined.
+            soundName: "priority.wav", // (optional) See `soundName` parameter of `localNotification` function
+            },
+            (created) => console.log(`create high Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+        );
+        PushNotification.createChannel(
+        {
+            channelId: "fusion-vibrate-0113", // (required)
+            channelName: "Vibrate Channel", // (required)
+            channelDescription: "A vibrate channel", // (optional) default: undefined.
+            playSound: false,
+            vibrate: true, // (optional) default: true. Creates the default vibration pattern if true
+            },
+            (created) => console.log(`create vibrate Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+        );
+        PushNotification.createChannel(
+        {
+            channelId: "fusion-mute-0113", // (required)
+            channelName: "No Sound Channel", // (required)
+            channelDescription: "A no sound channel", // (optional) default: undefined.
+            playSound: false,
+            vibrate: false, // (optional) default: true. Creates the default vibration pattern if true
+            },
+            (created) => console.log(`create mute Channel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+        );
+
         PushNotification.localNotificationSchedule({
+            id: 2704246,
             largeIcon: "ic_notification",
             channelId: 'fusion-sound-normal-0113',
             message: 'new message',
             title: 'xyz',
-            serverurl,
-            userToken,
             date: new Date(Date.now() + 5 * 1000), // in 5 secs
             repeatType: 'time',
             repeatTime: 30 * 1000,
-            playSound: user.sound_enabled && settings.playSoundOnNewMsg,
+            playSound: user.sound_enabled,
             soundName: "normal.wav",
-            vibrate: settings.vibrateOnNewMsg,
+            vibrate: user.sound_enabled,
+            importance: Importance.HIGH,
+            allowWhileIdle: true,
+            serverurl,
+            userToken,
         });
             
     }
 
+    
+
     const store = {
-        userToken: [ userToken, setUserToken
-         ],
+        userToken: [ userToken, setUserToken ],
         msgList: [ msgList, setMsgList ],
         user: [ user, setUser ],
         serverurl: [serverurl, setServerurl],

@@ -1,4 +1,4 @@
-package com.fusion.newarchitecture.modules;
+package com.fusionalarm.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

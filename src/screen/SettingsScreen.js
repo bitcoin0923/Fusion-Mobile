@@ -81,54 +81,7 @@ export default function SettingsScreen({navigation}) {
                     />
                   </View>
                 </View>
-                <View style={{...styles.inputContainer, marginTop: -20}}>
-                  <Text style={{flex: 7}}>Detect phone numbers in messages for callback</Text>  
-                  <Switch 
-                    trackColor={{false: '#767577', true: '#81b0ff'}}
-                    thumbColor={'dodgerblue'}
-                    style={{flex: 1}}
-                    value={settings.detectPhoneNumber}
-                    onValueChange={(value) => {
-                      setSettings({...settings, detectPhoneNumber:value})
-                    }}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={{flex: 7}}>Play sound on new message</Text>  
-                  <Switch 
-                    trackColor={{false: '#767577', true: '#81b0ff'}}
-                    thumbColor={'dodgerblue'}
-                    style={{flex: 1}}
-                    value={settings.playSoundOnNewMsg}
-                    onValueChange={(value) => {
-                      setSettings({...settings, playSoundOnNewMsg:value})
-                    }}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={{flex: 7}}>Vibrate on new message</Text>  
-                  <Switch 
-                    trackColor={{false: '#767577', true: '#81b0ff'}}
-                    thumbColor={'dodgerblue'}
-                    style={{flex: 1}}
-                    value={settings.vibrateOnNewMsg}
-                    onValueChange={(value) => {
-                      setSettings({...settings, vibrateOnNewMsg:value})
-                    }}
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={{flex: 7}}>Override phone silent mode for priority messages</Text>  
-                  <Switch 
-                    trackColor={{false: '#767577', true: '#81b0ff'}}
-                    thumbColor={'dodgerblue'}
-                    style={{flex: 1}}
-                    value={settings.overrideSilentOnPriority}
-                    onValueChange={(value) => {
-                      setSettings({...settings, overrideSilentOnPriority:value})
-                    }}
-                  />
-                </View>
+                
                 <View style={{...styles.inputContainer, marginTop: 20}}>
                   <Button type={'clear'}
                     containerStyle={{borderColor: 'lightgray', borderWidth: 1, width: 160}}
