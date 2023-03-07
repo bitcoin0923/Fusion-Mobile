@@ -1,5 +1,5 @@
 import config from "../config";
-import { encodeParams, encodeUriParams } from "./common";
+import { encodeParams, encodeUriParams, handleError } from "./common";
 
 export const actionMsg = async (serverurl, userid, eventid, token, action) => {
     const requestOptions = {
@@ -16,7 +16,7 @@ export const actionMsg = async (serverurl, userid, eventid, token, action) => {
     const resp = await fetch(serverurl + '/api/users/self/events/' + eventid + action + '?' + encodeParams({ 
         userid: 'self',
         eventid
-    }), requestOptions);
+    }), requestOptions).catch(handleError);
     const data = await resp.json();
     if(data.error){
         return {

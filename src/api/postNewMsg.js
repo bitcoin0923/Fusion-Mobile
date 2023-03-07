@@ -1,5 +1,5 @@
 import config from "../config";
-import { encodeParams } from "./common";
+import { encodeParams, handleError } from "./common";
 
 export const postNewMsg = async (serverurl, userid, event, token) => {
     const requestOptions = {
@@ -16,7 +16,7 @@ export const postNewMsg = async (serverurl, userid, event, token) => {
     };
     
     const resp = await fetch(serverurl + '/api/users/self/events/send' + '?' + encodeParams({ 
-    }), requestOptions);
+    }), requestOptions).catch(handleError);
     if(!resp.ok) {
         return {
             success: false,

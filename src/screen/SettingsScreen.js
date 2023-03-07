@@ -15,12 +15,8 @@ export default function SettingsScreen({navigation}) {
         userToken: [userToken, setUserToken],
         user: [ user, setUser ],
         serverurl: [serverurl, setServerurl],
-        settings: [settings, setSettings]
     } = useContext(DataContext);
 
-    useEffect(() => {
-      onApplyChange()
-    }, [settings])
 
     const [visibleConfirmDialog, setVisibleConfirmDialog] = useState(false);
 
@@ -41,23 +37,7 @@ export default function SettingsScreen({navigation}) {
       })
       setAnimating(false);
     }
-    const onApplyChange = () => {
-      MMKV.setMapAsync('settings', settings)
-    }
 
-    const onCheckLimit = (value) => {
-      const parsedValue = Number.parseInt(value)
-      if (Number.isNaN(parsedValue)) {
-        console.log('nan')
-        setSettings({...settings, maxMessages:"1"});
-      } else if (parsedValue > 99) {
-        console.log('large')
-        setSettings({...settings, maxMessages:"99"});
-      } else {
-        console.log('normal')
-        setSettings({...settings, maxMessages:value})
-      }
-    }
     
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -68,40 +48,29 @@ export default function SettingsScreen({navigation}) {
                   Settings
               </Text>
               <View style={{margin: 10}}>
-                <View style={styles.inputContainer}>
-                  
-                  <View style={{flex: 4}}>
-                    <Text style={{fontSize: 15,marginBottom:25}}>Max messages to keep.</Text>  
-                  </View>
-                  <View style={{flex: 1}}>
-                    <Input inputStyle={{ textAlign:'right', marginVertical:0, paddingVertical:0}} inputContainerStyle={{maxHeight:30, borderRadius: 3, borderWidth: 1, padding: 0}}   value={settings.maxMessages?settings.maxMessages:50} onChangeText={(value) => {
-                      onCheckLimit(value)
-                    }} 
-                      inputMode='numeric' keyboardType='numeric' 
-                    />
-                  </View>
-                </View>
                 
+                <View style={{marginTop: 10}}>
+                  <Text style={{fontSize: 17}}>{`Current User: ${user.name}`}</Text>  
+                </View>
                 <View style={{...styles.inputContainer, marginTop: 20}}>
                   <Button type={'clear'}
                     containerStyle={{borderColor: 'lightgray', borderWidth: 1, width: 160}}
                     title="Change Password"
                     onPress={() => navigation.navigate('ChangePassword')}
                   />
-                  <ActivityIndicator 
-                      animating={animating}
-                      size="large"
-                      color="dodgerblue"
-                  />
+                </View>
+                <View style={{...styles.inputContainer, marginTop: 20}}>
                   <Button 
                     disabled={animating}
                     containerStyle={{width: 160}}
                     title="LOG OUT"
                     onPress={toggleDialog}
                   />
-                </View>
-                <View style={{marginTop: 10}}>
-                  <Text style={{fontSize: 17}}>{`Current User: ${user.name}`}</Text>  
+                  <ActivityIndicator 
+                      animating={animating}
+                      size="large"
+                      color="dodgerblue"
+                  />
                 </View>
                 <Text style={{marginTop: 20}}>
                   App version: 1.0.0
@@ -156,6 +125,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-around'
+      justifyContent: 'flex-start',
+      marginLeft: 10
     }
   });

@@ -1,5 +1,5 @@
 import config from "../config";
-import { encodeParams, encodeUriParams } from "./common";
+import { encodeParams, encodeUriParams, handleError } from "./common";
 
 export const cancelAlarm = async (serverurl, alarmid, token) => {
     const requestOptions = {
@@ -14,7 +14,7 @@ export const cancelAlarm = async (serverurl, alarmid, token) => {
         }),
         redirect: 'follow'
     };
-    const resp = await fetch(serverurl + '/api/alarms/active/' + alarmid + '/cancel', requestOptions);
+    const resp = await fetch(serverurl + '/api/alarms/active/' + alarmid + '/cancel', requestOptions).catch(handleError);
     
     if(!resp.ok) {
         return {

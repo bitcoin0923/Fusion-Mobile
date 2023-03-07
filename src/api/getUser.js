@@ -1,5 +1,5 @@
 import config from "../config";
-import { encodeParams } from "./common";
+import { encodeParams, handleError } from "./common";
 
 export const getUser = async (serverurl, token) => {
     const requestOptions = {
@@ -14,7 +14,7 @@ export const getUser = async (serverurl, token) => {
     
     const resp = await fetch(serverurl + config.getUserUrl + '?' + encodeParams({ 
         'f': 'json'
-    }), requestOptions);
+    }), requestOptions).catch(handleError);
     if(!resp.ok) {
         return {
             success: false,

@@ -18,7 +18,8 @@ export default function NewMessageScreen({navigation}) {
   const {
     msgList: [msgList, setMsgList],
     userToken: [ userToken, setUserToken ],
-    serverurl: [serverurl, setServerurl]
+    serverurl: [serverurl, setServerurl],
+    shouldRefresh: [shouldRefresh, setShouldRefresh]
   } = useContext(DataContext);
   const ref = React.useRef();
 
@@ -78,6 +79,10 @@ export default function NewMessageScreen({navigation}) {
       ToastAndroid.showWithGravity('Please select recipients first.', ToastAndroid.SHORT, ToastAndroid.CENTER);
       return;
     }
+    if(content == '') {
+      ToastAndroid.showWithGravity('Please fill in the Message field.', ToastAndroid.SHORT, ToastAndroid.CENTER);
+      return;
+    }
     const event = {
       text: content,
       priority: sendPriority ? 1 : 0,
@@ -86,12 +91,12 @@ export default function NewMessageScreen({navigation}) {
     setAnimating(true);
     const res = await postNewMsg(serverurl, 'self', event, userToken);
     if(res.success){
-      setMsgList([]);
+      setShouldRefresh(true);
       ToastAndroid.showWithGravity('Sent Successfully!', ToastAndroid.SHORT, ToastAndroid.CENTER);
       navigation.navigate('MessageList');
     }
     else {
-      ToastAndroid.showWithGravity('Send New Message Failed with error: ' + res.error, ToastAndroid.SHORT, ToastAndroid.CENTER);
+      ToastAndroid.showWithGravity('Send New Message Failed with error: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
 
     }
     setAnimating(false)
@@ -133,15 +138,6 @@ export default function NewMessageScreen({navigation}) {
             </View>
           </View>
           
-          
-          
-          <Text style={{fontSize: 18, color: 'black'}}>
-            Message*
-          </Text>
-          <View style={{flex: 3}}>
-            <TextInput multiline={true} style={{color: 'black',fontSize: 17, height: '100%', borderRadius: 3, borderWidth: 1, borderColor: 'lightgray'}} textAlignVertical={'top'}  value={content}
-              onChangeText={(value) => {setContent(value)}} />
-          </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <CheckBox textStyle={{fontSize: 16}}  containerStyle={{backgroundColor: '#fafafa', marginRight: 0, marginLeft: 0,flex: 3}} checked={sendPriority} onPress={() => setSendPriority(!sendPriority)} title={'Send as priority message'} />
             <ActivityIndicator 
@@ -163,6 +159,15 @@ export default function NewMessageScreen({navigation}) {
               containerStyle={{flex: 1}}
             />
           </View>
+          
+          <Text style={{fontSize: 18, color: 'black'}}>
+            Message
+          </Text>
+          <View style={{flex: 3, marginBottom: 10}}>
+            <TextInput multiline={true} style={{color: 'black',fontSize: 17, height: '100%', borderRadius: 3, borderWidth: 1, borderColor: 'lightgray'}} textAlignVertical={'top'}  value={content}
+              onChangeText={(value) => {setContent(value)}} />
+          </View>
+          
           
         </View>
     </View>

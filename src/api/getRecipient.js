@@ -1,5 +1,5 @@
 import config from "../config";
-import { encodeParams } from "./common";
+import { encodeParams, handleError } from "./common";
 
 export const getRecipient = async (serverurl, id, token) => {
     const requestOptions = {
@@ -15,7 +15,7 @@ export const getRecipient = async (serverurl, id, token) => {
     const resp = await fetch(serverurl + '/api/recipients/' + id + '?' + encodeParams({ 
         f: 'json',
         id
-    }), requestOptions);
+    }), requestOptions).catch(handleError);
     if(!resp.ok) {
         return {
             success: false,

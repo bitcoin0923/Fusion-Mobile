@@ -1,5 +1,5 @@
 import config from "../config";
-import { encodeParams } from "./common";
+import { encodeParams, handleError } from "./common";
 
 export const getMsgList = async (serverurl, userid, args, token) => {
     const requestOptions = {
@@ -16,7 +16,7 @@ export const getMsgList = async (serverurl, userid, args, token) => {
         f: 'json',
         userid: 'self',
         ...args
-    }), requestOptions);
+    }), requestOptions).catch(handleError);
     if(!resp.ok) {
         return {
             success: false,

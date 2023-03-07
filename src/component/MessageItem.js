@@ -21,7 +21,7 @@ export default function MessageItem({msg}) {
       }}>
         {limitStringLength(msg.message.replace('\n', ' '), 25)}
       </Text>
-      <Text>{' '}</Text>
+      <Text>{msg.from_user}</Text>
       <View style={styles.bottomView}>
         <Text style={{position: 'absolute', left: 0}}>
           { getDate(new Date(msg.queue_time * 1000)) }

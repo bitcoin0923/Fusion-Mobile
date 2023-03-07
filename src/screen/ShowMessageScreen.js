@@ -1,11 +1,11 @@
-import { View, StyleSheet, ToastAndroid,Text } from 'react-native'
+import { View, StyleSheet, ToastAndroid,Text, Linking, Platform } from 'react-native'
 import React, { useState, useContext } from 'react'
 import { Button, Dialog, Input, } from '@rneui/themed';
 import { DataContext } from '../provider/DataProvider';
 import { getDate } from './../api/common';
 import { actionMsg } from './../api/actionMsg';
-import { getMsgList } from './../api/getMsgList';
 import { ActivityIndicator, TextInput } from 'react-native';
+import  TextLink  from  'react-native-text-link';
 
 export default function ShowMessageScreen({route, navigation}) {
   const [animating, setAnimating] = useState(false);
@@ -13,6 +13,7 @@ export default function ShowMessageScreen({route, navigation}) {
     userToken: [userToken, setUserToken],
     user: [ user, setUser ],
     msgList: [msgList, setMsgList],
+    shouldRefresh: [shouldRefresh, setShouldRefresh],
     serverurl: [serverurl, setServerurl],
   } = useContext(DataContext);
 
@@ -22,6 +23,9 @@ export default function ShowMessageScreen({route, navigation}) {
     func: forceEscalateMsg
   })
   const [visibleConfirmDialog, setVisibleConfirmDialog] = useState(false);
+
+  const msg = route.params;
+
   const toggleDialog = () => {
     setVisibleConfirmDialog(!visibleConfirmDialog);
   }
@@ -32,11 +36,11 @@ export default function ShowMessageScreen({route, navigation}) {
 
     if(res.success)
     {
-      setMsgList([]);
+      setShouldRefresh(true);
       navigation.navigate('MessageList');
     }
     else{
-      ToastAndroid.showWithGravity('Delete Message Failed: ' + res.error, ToastAndroid.SHORT, ToastAndroid.CENTER);
+      ToastAndroid.showWithGravity('Delete Message Failed: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
     }
   }
 
@@ -46,11 +50,11 @@ export default function ShowMessageScreen({route, navigation}) {
 
     if(res.success)
     {
-      setMsgList([])
+      setShouldRefresh(true)
       navigation.navigate('MessageList');
     }
     else{
-      ToastAndroid.showWithGravity('Accept Failed: ' + res.error, ToastAndroid.SHORT, ToastAndroid.CENTER);
+      ToastAndroid.showWithGravity('Accept Failed: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
     }
   }
 
@@ -60,11 +64,11 @@ export default function ShowMessageScreen({route, navigation}) {
 
     if(res.success)
     {
-      setMsgList([])
+      setShouldRefresh(true)
       navigation.navigate('MessageList');
     }
     else{
-      ToastAndroid.showWithGravity('Force Escalating Failed: ' + res.error, ToastAndroid.SHORT, ToastAndroid.CENTER);
+      ToastAndroid.showWithGravity('Force Escalating Failed: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
     }
   }
   const cancelAlarmMsg = async () => {
@@ -73,15 +77,33 @@ export default function ShowMessageScreen({route, navigation}) {
 
     if(res.success)
     {
-      setMsgList([])
+      setShouldRefresh(true)
       navigation.navigate('MessageList');
     }
     else{
-      ToastAndroid.showWithGravity('Canceling Alarm Failed: ' + res.error, ToastAndroid.SHORT, ToastAndroid.CENTER);
+      ToastAndroid.showWithGravity('Canceling Alarm Failed: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
     }
   }
+  const detectPhoneNumber = (text) => {
+      const regex = /(Ext|ext):\s*(\d+)/;
+      const match = text.match(regex);
+      if (match) {
+        console.log(match)
+          return match;
+      }
+      return null;
+  }
+  const callPhoneNumber = (number) => {
+      let phoneNumberUrl = '';
+      if (Platform.OS === 'android') {
+          phoneNumberUrl = `tel:${number}`;
+      } else {
+          phoneNumberUrl = `telprompt:${number}`;
+      }
 
-  const msg = route.params;
+      Linking.openURL(phoneNumberUrl);
+  }
+
   return (
     <View style={{flex: 1, padding: 10}}>
       <View style={{flexDirection: 'row-reverse'}}>
@@ -96,7 +118,7 @@ export default function ShowMessageScreen({route, navigation}) {
               color: 'dodgerblue'
           }}
           iconContainerStyle={{ marginRight: 3 }}
-          onPress={() => {setMsgList([]); navigation.navigate('MessageList')}}
+          onPress={() => {setShouldRefresh(true); navigation.navigate('MessageList')}}
         />
       </View>
       <View style={styles.rowContainer}>
@@ -108,7 +130,15 @@ export default function ShowMessageScreen({route, navigation}) {
         <TextInput editable={false} style={{ color: 'black',paddingVertical: 5, fontSize: 18,borderColor: 'lightgray', borderRadius: 3, borderWidth: 1, flex: 7}}  value={ getDate(new Date(msg.queue_time * 1000))} />
       </View>
       <Text style={styles.label}>Message</Text>
-      <TextInput editable={false} style={{ color: 'gray',flex: 20, fontSize: 15, borderColor: 'lightgray', borderRadius: 3, borderWidth: 1}}   value={msg.message} multiline={true} textAlignVertical={'top'}/>
+      
+      <TextLink textLinkStyle={{textDecorationLine:'underline', color: 'blue'}} pressingLinkStyle={{color: 'red'}} textStyle={{textAlignVertical: 'top', color: 'gray',flex: 20, fontSize: 15, borderColor: 'lightgray', borderRadius: 3, borderWidth: 1, }}
+        links={detectPhoneNumber(msg.message)?[{
+          text: detectPhoneNumber(msg.message)[0],
+          onPress: () =>  callPhoneNumber(detectPhoneNumber(msg.message)[2]),
+          }]:[]}
+        >
+          {msg.message}
+      </TextLink>
         {
           msg.priority && <Text style={styles.label}>
             This message was sent with <Text style={{color: '#f00'}}>High Priority!</Text>

@@ -12,7 +12,6 @@ export default function AlarmsScreen({navigation}) {
         alarmList: [alarmList, setAlarmList],
         userToken: [ userToken, setUserToken ],
         serverurl: [serverurl, setServerurl],
-        settings: [settings, setSettings],
         user: [ user, setUser ],
     } = useContext(DataContext);
     const [visibleDeleteConfirmDialog, setVisibleDeleteConfirmDialog] = useState(false);
@@ -57,26 +56,28 @@ export default function AlarmsScreen({navigation}) {
             refresh()
         }
         else{
-            ToastAndroid.showWithGravity('Messages error: ' + JSON.stringify(res.error), ToastAndroid.SHORT, ToastAndroid.CENTER);
+            ToastAndroid.showWithGravity('Messages error: ' + JSON.stringify(res.error.description), ToastAndroid.SHORT, ToastAndroid.CENTER);
         }
         toggleDialog()
     }
 
     const refresh = async () => {
         setAnimating(true);
-        const res = await getAlarmList(serverurl, {
-            offset: 0,
-            limit: settings.maxMessages
-        }, userToken);
+        const res = await getAlarmList(serverurl, {}, userToken);
         if(res.success)
         {
             setAlarmList(res.alarms);
         }
         else{
-            ToastAndroid.showWithGravity('Alarms error: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
-            await MMKV.setStringAsync('token', '');
-            await MMKV.setMapAsync('user', {});
-            setUserToken('');
+            if(res.error.description == 'NetworkError'){
+                ToastAndroid.showWithGravity('Network Error', ToastAndroid.SHORT, ToastAndroid.CENTER);
+            }
+            else{
+                ToastAndroid.showWithGravity('Alarms error: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
+                await MMKV.setStringAsync('token', '');
+                await MMKV.setMapAsync('user', {});
+                setUserToken('');
+            }
         }
         setAnimating(false);
     }
@@ -94,20 +95,6 @@ export default function AlarmsScreen({navigation}) {
                 />
             </View>
             
-            <View style={styles.bottomContainer}>
-                <Button type={'clear'}
-                    disabled={animating}
-                    title="Refresh Alarms"
-                    icon={{
-                        name: 'refresh',
-                        type: 'font-awesome',
-                        size: 15,
-                        color: 'dodgerblue',
-                    }}
-                    iconContainerStyle={{ marginRight: 10 }}
-                    onPress={async () => { await refresh();}}
-                />
-            </View>
             <Dialog
                 isVisible={visibleDeleteConfirmDialog}
                 onBackdropPress={toggleDialog}

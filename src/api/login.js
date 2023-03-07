@@ -1,5 +1,5 @@
 import config from "../config";
-import { encodeParams } from "./common";
+import { encodeParams, handleError } from "./common";
 
 
 export const logIn = async (serverurl, username, password) => {
@@ -15,7 +15,7 @@ export const logIn = async (serverurl, username, password) => {
             f: 'json'
         })
     };
-    const resp = await fetch(serverurl + config.generateTokenUrl, requestOptions);
+    const resp = await fetch(serverurl + config.generateTokenUrl, requestOptions).catch(handleError);
     if(!resp.ok) {
         return {
             success: false,

@@ -1,4 +1,4 @@
-import { encodeParams, encodeUriParams } from './common';
+import { encodeParams, encodeUriParams, handleError } from './common';
 export const changePassword = async (serverurl, password,token) => {
     const requestOptions = {
         method: 'POST',
@@ -12,7 +12,7 @@ export const changePassword = async (serverurl, password,token) => {
         }),
     };
     
-    const resp = await fetch(serverurl + '/api/users/self/password?', requestOptions);
+    const resp = await fetch(serverurl + '/api/users/self/password?', requestOptions).catch(handleError);
     if(!resp.ok) {
         return {
             success: false,

@@ -37,7 +37,7 @@ export default function PasswordChangeScreen({navigation}) {
             
         }
         else {
-            ToastAndroid.showWithGravity('Change password failed: ' + res.error, ToastAndroid.SHORT, ToastAndroid.CENTER);
+            ToastAndroid.showWithGravity('Change password failed: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
         }
         setAnimating(false);
     }
@@ -59,7 +59,7 @@ export default function PasswordChangeScreen({navigation}) {
                         }}
                         secureTextEntry={isPasswordSecure}
                         value={password}
-                        rightIcon={<Icon name='eye' type='font-awesome' size={15} onPress={() => setIsPasswordSecure(!isPasswordSecure)}  />}
+                        rightIcon={<Icon containerStyle={{marginRight: 5}} name='eye' type='font-awesome' size={20} onPress={() => setIsPasswordSecure(!isPasswordSecure)}  />}
                     />
                     <Input inputContainerStyle={{borderRadius: 3, borderWidth: 1}}   
                         placeholder="Confirm Password*" 
@@ -70,7 +70,7 @@ export default function PasswordChangeScreen({navigation}) {
                         }}
                         secureTextEntry={isConfirmSecure}
                         value={confirm}
-                        rightIcon={<Icon name='eye' type='font-awesome' size={15} onPress={() => setIsConfirmSecure(!isConfirmSecure)}  />}
+                        rightIcon={<Icon containerStyle={{marginRight: 5}} name='eye' type='font-awesome' size={20} onPress={() => setIsConfirmSecure(!isConfirmSecure)}  />}
                     />
                     
                     <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', marginBottom: 10 }}>

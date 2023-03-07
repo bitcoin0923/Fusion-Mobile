@@ -6,7 +6,9 @@ import { DataContext } from './../provider/DataProvider';
 
 export default function Header() {
     const netInfo = useNetInfo();
-
+    const {
+        userToken: [ userToken, setUserToken ],
+    } = useContext(DataContext);
     return (
         <LinearGradient
             colors={['#6a90c1', '#a7cff3']}
@@ -15,14 +17,23 @@ export default function Header() {
         >
             <View style={styles.container}>
                 <View>
-                    <Text style={styles.title}>
+                    <Text style={userToken != '' ? styles.title: styles.titleAlone}>
                         Fusion Mobile
                     </Text>
                     {
-                        !(netInfo.isInternetReachable && netInfo.isConnected) && 
-                        <View style={styles.container}>
-                            <Text style={{color: 'red'}}>You are not connected to network</Text>                    
-                        </View>    
+                        userToken != '' &&
+                        (
+                            (netInfo.isInternetReachable && netInfo.isConnected) ? 
+                            <View style={styles.containerMinor}>
+                                <Image source={{uri: 'asset:/wifi_on.png'}} style={styles.imgWifi} />
+                                <Text style={{color: 'green', fontSize: 10}}>Connected</Text>                    
+                            </View> : 
+                            <View style={styles.containerMinor}>
+                                <Image source={{uri: 'asset:/wifi_off.png'}} style={styles.imgWifi} />
+                                <Text style={{color: 'red', fontSize: 10}}>Not Connected!</Text>                    
+                            </View>
+                        )
+                        
                     }
                 </View>
                 <Image source={{uri: 'asset:/logo.png'}} style={styles.img} />
@@ -41,14 +52,34 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
+    containerMinor: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginLeft: 13,
+        marginTop: 5
+    },
     title: {
         textAlign: 'left',
         color: 'white',
         marginLeft: 10,
-        fontSize: 25
+        fontSize: 24,
+        marginTop: 10,
+        marginBottom: -5
+    },
+    titleAlone: {
+        textAlign: 'left',
+        color: 'white',
+        marginLeft: 10,
+        fontSize: 24,
     },
     img: {
         height: 60,
         width: 84
+    },
+    imgWifi: {
+        height: 12,
+        width: 12,
+        marginRight: 5
     }
 });

@@ -69,3 +69,12 @@ export const durationToHHMMSS = (sec_num) => {
     }
     return h + ":" + m + ":" + s;
   };
+
+export const handleError =  (err) =>  {
+  console.log(err)
+  return new Response(JSON.stringify({
+      error: {
+        description: 'NetworkError'
+      }
+  }));
+};

@@ -1,4 +1,4 @@
-import { encodeParams, encodeUriParams } from './common';
+import { encodeParams, encodeUriParams, handleError } from './common';
 
 export const logout = async (serverurl, token) => {
     const requestOptions = {
@@ -12,7 +12,7 @@ export const logout = async (serverurl, token) => {
         }),
     };
     
-    const resp = await fetch(serverurl + '/api/tokens/releasetoken', requestOptions);
+    const resp = await fetch(serverurl + '/api/tokens/releasetoken', requestOptions).catch(handleError);
     if(!resp.ok) {
         return {
             success: false,

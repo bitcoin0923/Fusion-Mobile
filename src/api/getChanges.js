@@ -1,5 +1,5 @@
 import config from "../config";
-import { encodeParams, encodeUriParams } from "./common";
+import { encodeParams, encodeUriParams, handleError } from "./common";
 
 export const getChanges = async (serverurl, token) => {
     const requestOptions = {
@@ -13,7 +13,7 @@ export const getChanges = async (serverurl, token) => {
     };
     const resp = await fetch(serverurl + '/api/users/self/changes?' + encodeParams({
         f: 'json',
-    }), requestOptions);
+    }), requestOptions).catch(handleError);
     
     if(!resp.ok) {
         return {

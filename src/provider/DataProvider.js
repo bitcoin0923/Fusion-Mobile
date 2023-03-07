@@ -20,16 +20,10 @@ export const DataProvider = ({ children }) => {
     const [hostname, setHostname] = useState('');
     const [checkRemember, setCheckRemember] = useState(true);
     const [instance, setInstance] = useState('');
-    const [settings, setSettings] = useState({
-        maxMessages: '10'
-    });
+    const [shouldRefresh, setShouldRefresh] = useState(false)
     useEffect(() => {
         const getSettingsOnce = async () => {
             MMKV.initialize();
-            const res = await MMKV.getMapAsync('settings');
-            if(res){
-                setSettings(res)
-            }
             const resUser = await MMKV.getMapAsync('user')
             if(resUser){
                 setUser(resUser);
@@ -169,7 +163,10 @@ export const DataProvider = ({ children }) => {
 
     useEffect(() => {
         const refreshOnce = async () => {
-            if(msgList.length || userToken == ''){
+            if( userToken == ''){
+                return;
+            }
+            if(!shouldRefresh){
                 return;
             }
             if(!user.privileges.messaging){
@@ -183,32 +180,29 @@ export const DataProvider = ({ children }) => {
             setAnimating(true)
             const res = await getMsgList(serverurl, 'self', {
                 orderBy: "MQ.QueueTM DESC", 
-                offset: 0,
-                limit: settings.maxMessages
             },userToken);
-            
             if(res.success)
             {
-                if(res.events.length){
-                    setMsgList(res.events);
-                }
+                setMsgList(res.events);
             }
             else{
-                ToastAndroid.showWithGravity('Messages error: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
-                await MMKV.setStringAsync('token', '');
-                await MMKV.setMapAsync('user', {});
-                setUserToken('');
+                if(res.error.description == 'NetworkError'){
+                    ToastAndroid.showWithGravity('Network Error', ToastAndroid.SHORT, ToastAndroid.CENTER);
+                }
+                else{
+                    ToastAndroid.showWithGravity('Messages error: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
+                    await MMKV.setStringAsync('token', '');
+                    await MMKV.setMapAsync('user', {});
+                    setUserToken('');
+                }
+                
             }
+            setShouldRefresh(false);
             setAnimating(false);
         }
         refreshOnce();
-    }, [msgList])
+    }, [shouldRefresh])
     
-    useEffect(() => {
-        if(userToken != ''){
-            restartNotificationSchedule();
-        }
-    }, [settings])
 
     const restartNotificationSchedule = () => {
 
@@ -265,7 +259,7 @@ export const DataProvider = ({ children }) => {
             title: 'xyz',
             date: new Date(Date.now() + 5 * 1000), // in 5 secs
             repeatType: 'time',
-            repeatTime: 30 * 1000,
+            repeatTime: 10 * 1000,
             playSound: user.sound_enabled,
             soundName: "normal.wav",
             vibrate: user.sound_enabled,
@@ -289,10 +283,11 @@ export const DataProvider = ({ children }) => {
         password: [password, setPassword],
         hostname: [hostname, setHostname],
         instance: [instance, setInstance],
-        settings: [settings, setSettings],
         checkRemember: [checkRemember, setCheckRemember],
         notifMsgid: [notifMsgid, setNotifMsgid],
-        animating: [animating, setAnimating]
+        animating: [animating, setAnimating],
+        shouldRefresh: [shouldRefresh, setShouldRefresh]
+
     }
     return (
         <DataContext.Provider value={store}>

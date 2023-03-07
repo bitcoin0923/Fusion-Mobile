@@ -3,9 +3,10 @@ import React, { useEffect, useContext, useState } from 'react'
 import { DataContext } from './../provider/DataProvider';
 import { getMsgList } from './../api/getMsgList';
 import MessageItem from '../component/MessageItem';
-import { Button } from '@rneui/themed';
+import { Button, FAB } from '@rneui/themed';
 import { actionMsg } from './../api/actionMsg';
 import MMKV from '../store/MMKV';
+import { Linking } from 'react-native';
 
 export default function MessageListScreen({navigation}) {
     const {
@@ -14,14 +15,12 @@ export default function MessageListScreen({navigation}) {
         serverurl: [serverurl, setServerurl],
         notifMsgid: [notifMsgid, setNotifMsgid],
         animating: [animating, setAnimating],
-        settings: [settings, setSettings],
+        shouldRefresh: [shouldRefresh, setShouldRefresh]
     } = useContext(DataContext);
     useEffect( () => {
         const refreshOnce = async () => {
             const res = await getMsgList(serverurl, 'self', {
                 orderBy: "MQ.QueueTM DESC", 
-                offset: 0,
-                limit: settings.maxMessages
             },userToken);
             if(res.success)
             {
@@ -32,29 +31,34 @@ export default function MessageListScreen({navigation}) {
                         const element = res.events[index];
                         if(element.id == notifMsgid){
                             actionMsg(serverurl, 'self', notifMsgid, userToken, '/read');
-                            setMsgList([])
+                            setShouldRefresh(true)
                             navigation.navigate('ShowMessage', element);
                         } 
                     }
                 }
             }
             else{
-                ToastAndroid.showWithGravity('Messages error: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
-                await MMKV.setStringAsync('token', '');
-                await MMKV.setMapAsync('user', {});
-                setUserToken('');
+                if(res.error.description == 'NetworkError'){
+                    ToastAndroid.showWithGravity('Network Error', ToastAndroid.SHORT, ToastAndroid.CENTER);
+                }
+                else{
+                    ToastAndroid.showWithGravity('Messages error: ' + res.error.description, ToastAndroid.SHORT, ToastAndroid.CENTER);
+                    await MMKV.setStringAsync('token', '');
+                    await MMKV.setMapAsync('user', {});
+                    setUserToken('');
+                }
             }
         }
         refreshOnce();
     }, []);
 
-
+    
 
     const renderItem = ({ item }) => (
         <TouchableOpacity  onPress={async () => {
             if(item.status == 4){
                 actionMsg(serverurl, 'self', item.id, userToken, '/read');
-                setMsgList([])
+                setShouldRefresh(true)
             }
             navigation.navigate('ShowMessage', item);
         }}>
@@ -73,41 +77,18 @@ export default function MessageListScreen({navigation}) {
                     data={msgList}
                     renderItem={renderItem} 
                     keyExtractor={msg => msg.id}  
-                    onRefresh={() => {setMsgList([]);}}
+                    onRefresh={() => {setShouldRefresh(true)}}
                     refreshing={animating}
                 />
             </View>
-            
-            <View style={styles.bottomContainer}>
-                <Button type={'clear'}
-                    disabled={animating}
-                    title="Refresh Inbox"
-                    icon={{
-                        name: 'refresh',
-                        type: 'font-awesome',
-                        size: 15,
-                        color: 'dodgerblue',
-                    }}
-                    iconContainerStyle={{ marginRight: 10 }}
-                    onPress={() => { 
-                        setMsgList([]);
-                    }}
-
-                />
-                <Button type={'clear'}
-                    title="Write a new Message"
-                    icon={{
-                        name: 'envelope-o',
-                        type: 'font-awesome',
-                        size: 15,
-                        color: 'dodgerblue',
-                    }}
-                    iconContainerStyle={{ marginRight: 10 }}
-                    onPress={() => { 
-                        navigation.navigate('NewMessage');
-                    }}
-                />
-            </View>
+            <FAB
+                onPress={() => {
+                    navigation.navigate('NewMessage');
+                }}
+                placement="right"
+                icon={{ name: 'edit', color: 'white' }}
+                color="dodgerblue"
+            />
         </View>
     )
 }

@@ -14,6 +14,7 @@ export default function ReplyMessageScreen({ route, navigation }) {
   const {
         msgList: [msgList, setMsgList],
         userToken: [userToken, setUserToken],
+        shouldRefresh: [shouldRefresh, setShouldRefresh],
         serverurl: [serverurl, setServerurl]
     } = useContext(DataContext);
   
@@ -28,7 +29,7 @@ export default function ReplyMessageScreen({ route, navigation }) {
     setAnimating(true);
     const res = await postNewMsg(serverurl, 'self', event, userToken);
     if(res.success){
-        setMsgList([]);
+        setShouldRefresh(true);
         ToastAndroid.showWithGravity('Reply Successfully!', ToastAndroid.SHORT, ToastAndroid.CENTER);
         navigation.navigate('MessageList');
     }
@@ -64,10 +65,7 @@ export default function ReplyMessageScreen({ route, navigation }) {
             <Text style={styles.label} containerStyle={{flex:1}}>Received</Text>
             <TextInput editable={false}  style={{color: 'gray', fontSize: 18,borderRadius: 3, borderWidth: 1, flex:7, borderColor: 'lightgray', paddingVertical: 5}}  value={getDate(new Date(msg.queue_time * 1000))} />
         </View>
-        <View  style={{flex: 10}}>
-            <TextInput style={{color: 'black', fontSize: 17, height: '100%', borderRadius: 3, borderWidth: 1, borderColor: 'lightgray'}}   value={content} textAlignVertical={'top'} placeholderTextColor={'gray'}
-                onChangeText={(value) => {setContent(value)}} placeholder='Type Your Reply Here...' multiline={true} />
-        </View>
+        
         
         <View style={styles.rowContainerSend}>
             <CheckBox 
@@ -96,7 +94,10 @@ export default function ReplyMessageScreen({ route, navigation }) {
                 containerStyle={{ flex: 1}}
             />
         </View>
-
+        <View  style={{flex: 10, marginBottom: 5}}>
+            <TextInput style={{color: 'black', fontSize: 17, height: '100%', borderRadius: 3, borderWidth: 1, borderColor: 'lightgray'}}   value={content} textAlignVertical={'top'} placeholderTextColor={'gray'}
+                onChangeText={(value) => {setContent(value)}} placeholder='Type Your Reply Here...' multiline={true} />
+        </View>
         <Text style={styles.label}>Message</Text>
         <View style={{flex: 10}}>
             <TextInput style={{color: 'gray', fontSize: 15, height: '100%', borderRadius: 3, borderWidth: 1, borderColor: 'lightgray'}}  multiline={true}   value={msg.message} editable={false}  textAlignVertical='top'/>

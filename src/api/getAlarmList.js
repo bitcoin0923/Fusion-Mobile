@@ -1,5 +1,5 @@
 import config from "../config";
-import { encodeParams } from "./common";
+import { encodeParams, handleError } from "./common";
 
 export const getAlarmList = async (serverurl, args, token) => {
     const requestOptions = {
@@ -15,7 +15,7 @@ export const getAlarmList = async (serverurl, args, token) => {
     const resp = await fetch(serverurl + '/api/alarms/active' + '?' + encodeParams({ 
         f: 'json',
         ...args
-    }), requestOptions);
+    }), requestOptions).catch(handleError);
     if(!resp.ok) {
         return {
             success: false,

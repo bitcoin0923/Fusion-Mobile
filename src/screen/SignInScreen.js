@@ -29,7 +29,6 @@ export default function SignInScreen({navigation}) {
         hostname: [hostname, setHostname],
         instance: [instance, setInstance],
         checkRemember: [checkRemember, setCheckRemember],
-        settings: [settings, setSettings]
     } = useContext(DataContext);
 
     
@@ -110,7 +109,7 @@ export default function SignInScreen({navigation}) {
                             }}
                             secureTextEntry={isPasswordSecure}
                             value={password}
-                            rightIcon={<Icon name='eye' type='font-awesome' size={15} onPress={() => setIsPasswordSecure(!isPasswordSecure)}  />}
+                            rightIcon={<Icon containerStyle={{marginRight: 5}} name='eye' type='font-awesome' size={20} onPress={() => setIsPasswordSecure(!isPasswordSecure)}  />}
                         />
                         <Input inputContainerStyle={{borderRadius: 3, borderWidth: 1}}  
                             placeholderTextColor={'gray'}
