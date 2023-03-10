@@ -75,37 +75,17 @@ export const DataProvider = ({ children }) => {
                     if(notification.actionType == 'user_event'){
                         setNotifMsgid(notification.objectId);
                         if(userToken != ''){
-                            if(!user.privileges.messaging){
-                                ToastAndroid.showWithGravity('Messages: Permission Denied', ToastAndroid.SHORT, ToastAndroid.CENTER);
-                                RootNavigation.navigationRef.current?.resetRoot({
-                                    index: 0,
-                                    routes: [{name: 'Alarms'}]
-                                })
-                                return;
-                            }
-                            else{
-                                RootNavigation.navigationRef.current?.resetRoot({
-                                    index: 0,
-                                    routes: [{name: 'MessageList'}]
-                                })
-                            }
+                            RootNavigation.navigationRef.current?.resetRoot({
+                                index: 0,
+                                routes: [{name: 'Alarms'}]
+                            })
                         }
                     }else if(notification.actionType == 'active_alarm'){
                         if(userToken != ''){
-                            if(!user.privileges.manage_alarms){
-                                ToastAndroid.showWithGravity('Alarms: Permission Denied', ToastAndroid.SHORT, ToastAndroid.CENTER);
-                                RootNavigation.navigationRef.current?.resetRoot({
-                                    index: 0,
-                                    routes: [{name: 'MessageList'}]
-                                })
-                                return;
-                            }
-                            else{
-                                RootNavigation.navigationRef.current?.resetRoot({
-                                    index: 0,
-                                    routes: [{name: 'Alarms'}]
-                                })
-                            }
+                            RootNavigation.navigationRef.current?.resetRoot({
+                                index: 0,
+                                routes: [{name: 'Alarms'}]
+                            })
                         }
                     }
                 },
@@ -131,11 +111,17 @@ export const DataProvider = ({ children }) => {
             console.log("userToken:", userToken);
             
             if(!user.privileges.messaging){
-                ToastAndroid.showWithGravity('Messages: Permission Denied', ToastAndroid.SHORT, ToastAndroid.CENTER);
-                RootNavigation.navigationRef.current?.resetRoot({
-                    index: 0,
-                    routes: [{name: 'Alarms'}]
-                })
+                if(!user.privileges.manage_alarms){
+                    RootNavigation.navigationRef.current?.resetRoot({
+                        index: 0,
+                        routes: [{name: "Settings"}]
+                    })
+                }else{
+                    RootNavigation.navigationRef.current?.resetRoot({
+                        index: 0,
+                        routes: [{name: 'Alarms'}]
+                    })
+                }
             }
             else{
                 RootNavigation.navigationRef.current?.resetRoot({
@@ -143,7 +129,6 @@ export const DataProvider = ({ children }) => {
                     routes: [{name: "MessageList"}]
                 })
             }
-            
         }
         else {
             if(!checkRemember)
@@ -170,7 +155,6 @@ export const DataProvider = ({ children }) => {
                 return;
             }
             if(!user.privileges.messaging){
-                ToastAndroid.showWithGravity('Messages: Permission Denied', ToastAndroid.SHORT, ToastAndroid.CENTER);
                 RootNavigation.navigationRef.current?.resetRoot({
                     index: 0,
                     routes: [{name: 'Alarms'}]
@@ -178,6 +162,7 @@ export const DataProvider = ({ children }) => {
                 return;
             }
             setAnimating(true)
+            console.log("refresh at dataprovider")
             const res = await getMsgList(serverurl, 'self', {
                 orderBy: "MQ.QueueTM DESC", 
             },userToken);
@@ -211,6 +196,7 @@ export const DataProvider = ({ children }) => {
         PushNotification.deleteChannel("fusion-sound-normal-0113");
         PushNotification.deleteChannel("fusion-sound-priority-0113");
         PushNotification.deleteChannel("fusion-mute-0113");
+        PushNotification.deleteChannel("fusion-vibrate-0113");
         
         PushNotification.createChannel(
         {
@@ -232,7 +218,7 @@ export const DataProvider = ({ children }) => {
         );
         PushNotification.createChannel(
         {
-            channelId: "fusion-vibrate-0113", // (required)
+            channelId: "", // (required)
             channelName: "Vibrate Channel", // (required)
             channelDescription: "A vibrate channel", // (optional) default: undefined.
             playSound: false,

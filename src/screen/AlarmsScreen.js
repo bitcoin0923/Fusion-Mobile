@@ -99,7 +99,7 @@ export default function AlarmsScreen({navigation}) {
                 isVisible={visibleDeleteConfirmDialog}
                 onBackdropPress={toggleDialog}
             >
-                <Dialog.Title titleStyle={{color: 'black'}} title={`Cancel Alarm ${cancelData.alarmName}`}/>
+                <Dialog.Title titleStyle={{color: 'black'}} title={`Cancel Alarm ${cancelData.alarmName}`} />
                 <Text style={{color: 'black'}}>
                 Are you sure that you wish to cancel this Alarm?
                 </Text>

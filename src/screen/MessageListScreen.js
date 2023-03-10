@@ -19,6 +19,7 @@ export default function MessageListScreen({navigation}) {
     } = useContext(DataContext);
     useEffect( () => {
         const refreshOnce = async () => {
+            console.log("refresh at messagelist")
             const res = await getMsgList(serverurl, 'self', {
                 orderBy: "MQ.QueueTM DESC", 
             },userToken);
