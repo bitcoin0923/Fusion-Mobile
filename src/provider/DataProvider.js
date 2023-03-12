@@ -77,7 +77,7 @@ export const DataProvider = ({ children }) => {
                         if(userToken != ''){
                             RootNavigation.navigationRef.current?.resetRoot({
                                 index: 0,
-                                routes: [{name: 'Alarms'}]
+                                routes: [{name: 'MessageList'}]
                             })
                         }
                     }else if(notification.actionType == 'active_alarm'){
@@ -218,7 +218,7 @@ export const DataProvider = ({ children }) => {
         );
         PushNotification.createChannel(
         {
-            channelId: "", // (required)
+            channelId: "fusion-vibrate-0113", // (required)
             channelName: "Vibrate Channel", // (required)
             channelDescription: "A vibrate channel", // (optional) default: undefined.
             playSound: false,
