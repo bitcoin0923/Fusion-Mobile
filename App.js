@@ -13,9 +13,23 @@ import { DataProvider } from './src/provider/DataProvider';
 import WholeContainer from './src/container/WholeContainer';
 import { createTheme, Text, ThemeProvider } from '@rneui/themed';
 import { TextInput } from 'react-native';
-
-
+import { useEffect } from 'react'; // added by KJR 
+//import BackgroundTimer from 'react-native-background-timer';  
 export default App = () => {
+   
+  // async function getPowerState () {
+  //   const state = await DeviceInfo.getPowerState();
+  //   if(state == 'unplugged') {
+  //     BackgroundTimer.start(10000);
+  //   }
+  //   else{
+  //     BackgroundTimer.stop();
+  //   }
+  // };
+  // useEffect(()=>{
+  //  getPowerState();
+  // },[])
+
   const theme = createTheme({
     components: {
       Text: {
@@ -26,6 +40,7 @@ export default App = () => {
       }
     }
   })
+
   return (
     <ThemeProvider theme={theme}>
       <SafeAreaProvider>

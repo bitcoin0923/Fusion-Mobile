@@ -8,6 +8,7 @@ import { ToastAndroid } from 'react-native';
 export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
+    const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(true);
     const [animating, setAnimating] = useState(false);
     const [notifMsgid, setNotifMsgid] = useState(0);
     const [ userToken, setUserToken ] = useState('');
@@ -35,6 +36,9 @@ export const DataProvider = ({ children }) => {
             const resToken = await MMKV.getStringAsync('token')
             if(resToken){
                 setUserToken(resToken);
+            }
+            else{
+                setAlreadyLoggedIn(false);
             }
             const resRemember = await MMKV.getStringAsync('Remember')
             if(resRemember){
@@ -101,12 +105,12 @@ export const DataProvider = ({ children }) => {
             });
 
             
-
-            restartNotificationSchedule();
+            if(!alreadyLoggedIn){
+                startNotificationSchedule();
+            }
             
         }
         if(userToken != ''){
-            
             initPushNotification();
             console.log("userToken:", userToken);
             
@@ -142,7 +146,6 @@ export const DataProvider = ({ children }) => {
                 index: 0,
                 routes: [{name: 'SignIn'}]
             })
-            PushNotification.cancelAllLocalNotifications();
         }
     }, [userToken]);
 
@@ -189,14 +192,12 @@ export const DataProvider = ({ children }) => {
     }, [shouldRefresh])
     
 
-    const restartNotificationSchedule = () => {
-
-        PushNotification.cancelAllLocalNotifications();
+    const startNotificationSchedule = () => {
         
-        PushNotification.deleteChannel("fusion-sound-normal-0113");
-        PushNotification.deleteChannel("fusion-sound-priority-0113");
-        PushNotification.deleteChannel("fusion-mute-0113");
-        PushNotification.deleteChannel("fusion-vibrate-0113");
+        // PushNotification.deleteChannel("fusion-sound-normal-0113");
+        // PushNotification.deleteChannel("fusion-sound-priority-0113");
+        // PushNotification.deleteChannel("fusion-mute-0113");
+        // PushNotification.deleteChannel("fusion-vibrate-0113");
         
         PushNotification.createChannel(
         {

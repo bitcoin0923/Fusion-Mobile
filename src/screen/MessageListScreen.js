@@ -34,6 +34,7 @@ export default function MessageListScreen({navigation}) {
                             actionMsg(serverurl, 'self', notifMsgid, userToken, '/read');
                             setShouldRefresh(true)
                             navigation.navigate('ShowMessage', element);
+                            setNotifMsgid(0)
                         } 
                     }
                 }
