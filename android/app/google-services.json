@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1034347318209",
+    "project_id": "emm-dev-750cb",
+    "storage_bucket": "emm-dev-750cb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034347318209:android:fc39db1e8922ff9c15fd40",
+        "android_client_info": {
+          "package_name": "com.fusiontest.fusion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1034347318209-80693lq0jv5vj3fhljk2m48ralcod748.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGg0hScIPOJwUisX0U2l2akQyTrn8EhF8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1034347318209-80693lq0jv5vj3fhljk2m48ralcod748.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

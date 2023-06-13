@@ -93,15 +93,23 @@ export const DataProvider = ({ children }) => {
                         }
                     }
                 },
-    
+                // (optional) Called when Token is generated (iOS and Android)
+                onRegister: function (token) {
+                    console.info("TOKEN:", token);
+                },
+                // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
+                onRegistrationError: function(err) {
+                    console.error(err.message, err);
+                },
+
                 // Permissions to register for iOS
                 permissions: {
-                alert: true,
-                badge: true,
-                sound: true,
+                    alert: true,
+                    badge: true,
+                    sound: true,
                 },
                 popInitialNotification: true,
-                requestPermissions: Platform.OS === 'ios'
+                requestPermissions: true
             });
 
             
