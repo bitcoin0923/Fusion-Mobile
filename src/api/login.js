@@ -1,8 +1,17 @@
 import config from "../config";
-import { encodeParams, handleError } from "./common";
+import { encodeParams, encodeUriParams, handleError } from "./common";
 
 
-export const logIn = async (serverurl, username, password) => {
+export const logIn = async (serverurl, username, password, clientid, platformtype, platformversion, applicationversion) => {
+    console.info("login", {
+        username,
+        password,
+        f: 'json',
+        clientid,
+        platformtype: "Android",
+        platformversion,
+        applicationversion
+    });
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -12,7 +21,11 @@ export const logIn = async (serverurl, username, password) => {
         body: encodeParams({
             username,
             password,
-            f: 'json'
+            f: 'json',
+            clientid,
+            platformtype: "Android",
+            platformversion,
+            applicationversion
         })
     };
     const resp = await fetch(serverurl + config.generateTokenUrl, requestOptions).catch(handleError);

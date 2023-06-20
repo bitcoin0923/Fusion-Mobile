@@ -1,14 +1,11 @@
 import { useState, useContext, useEffect } from 'react'
 import React from 'react'
-import { StyleSheet, View, ToastAndroid, ActivityIndicator, AppRegistry, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, View, ToastAndroid, ActivityIndicator, AppRegistry, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { Text, Input, Button, Icon, CheckBox } from '@rneui/themed';
 
 import { DataContext } from '../provider/DataProvider';
 import { logIn } from './../api/login';
 import { getUser } from '../api/getUser';
-import { navigationRef } from './../component/RootNavigation';
-import { getChanges } from './../api/getChanges';
-import  PushNotification  from 'react-native-push-notification';
 import MMKV from '../store/MMKV';
 
 export default function SignInScreen({navigation}) {
@@ -29,6 +26,10 @@ export default function SignInScreen({navigation}) {
         hostname: [hostname, setHostname],
         instance: [instance, setInstance],
         checkRemember: [checkRemember, setCheckRemember],
+        platformType: [platformType, setPlatformType],
+        platformVersion: [platformVersion, setPlatformVersion],
+        applicationVersion: [applicationVersion, setApplicationVersion],
+        clientId: [clientId, setClientId]
     } = useContext(DataContext);
 
     
@@ -52,7 +53,7 @@ export default function SignInScreen({navigation}) {
         }
         setAnimating(true);
         ToastAndroid.showWithGravity('Logging in to: ' + serverurl, ToastAndroid.SHORT, ToastAndroid.CENTER)
-        const res = await logIn(serverurl, username, password);
+        const res = await logIn(serverurl, username, password, clientId, platformType, platformVersion, applicationVersion);
         if(res.success) {
             await MMKV.setStringAsync('token', res.token);
             await MMKV.setStringAsync('serverurl', serverurl);
@@ -75,6 +76,7 @@ export default function SignInScreen({navigation}) {
             else {
                 ToastAndroid.showWithGravity('Receive User Failed: ' + user.error, ToastAndroid.SHORT, ToastAndroid.CENTER);
             }
+            //this should be last because of useEffect in DataProvider
             setUserToken(res.token);
         }
         else {

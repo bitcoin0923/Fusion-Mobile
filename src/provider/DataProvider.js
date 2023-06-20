@@ -2,8 +2,13 @@ import React, { createContext, useEffect, useState } from 'react';
 import MMKV from '../store/MMKV';
 import * as RootNavigation from './../component/RootNavigation';
 import PushNotification, { Importance } from 'react-native-push-notification';
+import PackageInfo from '../../package.json';
 import { getMsgList } from '../api/getMsgList';
 import { ToastAndroid } from 'react-native';
+import { Platform } from 'react-native';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
+import { subscribeFirebase } from '../api/subscribeFirebase';
 
 export const DataContext = createContext();
 
@@ -21,13 +26,26 @@ export const DataProvider = ({ children }) => {
     const [hostname, setHostname] = useState('');
     const [checkRemember, setCheckRemember] = useState(true);
     const [instance, setInstance] = useState('');
-    const [shouldRefresh, setShouldRefresh] = useState(false)
+    const [shouldRefresh, setShouldRefresh] = useState(false);
+    const [clientId, setClientId] = useState('');
+    const [platformType, setPlatformType] = useState('');
+    const [platformVersion, setPlatformVersion] = useState('');
+    const [applicationVersion, setApplicationVersion] = useState('');
     useEffect(() => {
         const getSettingsOnce = async () => {
             MMKV.initialize();
             const resUser = await MMKV.getMapAsync('user')
             if(resUser){
                 setUser(resUser);
+            }
+            const resClientId = await MMKV.getStringAsync('clientId');
+            if(resClientId){
+                setClientId(resClientId);
+            }
+            else{
+                const newClientId = uuidv4();
+                setClientId(newClientId);
+                await MMKV.setStringAsync('clientId', newClientId);
             }
             const resServerurl = await MMKV.getStringAsync('serverurl');
             if(resServerurl){
@@ -65,6 +83,10 @@ export const DataProvider = ({ children }) => {
             
         }
         
+        setPlatformType(Platform.OS);
+        setPlatformVersion(Platform.Version);
+        setApplicationVersion(PackageInfo.version);
+
         getSettingsOnce();
 
     }, [])
@@ -76,6 +98,9 @@ export const DataProvider = ({ children }) => {
                 // onNotification is called when a notification is to be emitted
                 onNotification: (notification) => {
                     console.log("NOTIFICATION:", notification);
+                    if(notification.actionType){
+                        PushNotification.removeAllDeliveredNotifications();
+                    }
                     if(notification.actionType == 'user_event'){
                         setNotifMsgid(notification.objectId);
                         if(userToken != ''){
@@ -94,8 +119,16 @@ export const DataProvider = ({ children }) => {
                     }
                 },
                 // (optional) Called when Token is generated (iOS and Android)
-                onRegister: function (token) {
+                onRegister: async function (token) {
                     console.info("TOKEN:", token);
+                    const res = await subscribeFirebase(serverurl, token.token, userToken);
+                    if(res.success){
+                      ToastAndroid.showWithGravity('Subscribed to Firebase', ToastAndroid.SHORT, ToastAndroid.CENTER);
+                    }
+                    else {
+                      ToastAndroid.showWithGravity('Subscription Failed with error: ' + res.error, ToastAndroid.SHORT, ToastAndroid.CENTER);
+                
+                    }
                 },
                 // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
                 onRegistrationError: function(err) {
@@ -114,9 +147,11 @@ export const DataProvider = ({ children }) => {
 
             
             if(!alreadyLoggedIn){
+                //this saves to preference
                 startNotificationSchedule();
             }
             
+            //startNotificationSchedule();
         }
         if(userToken != ''){
             initPushNotification();
@@ -281,8 +316,11 @@ export const DataProvider = ({ children }) => {
         checkRemember: [checkRemember, setCheckRemember],
         notifMsgid: [notifMsgid, setNotifMsgid],
         animating: [animating, setAnimating],
-        shouldRefresh: [shouldRefresh, setShouldRefresh]
-
+        shouldRefresh: [shouldRefresh, setShouldRefresh],
+        platformType: [platformType, setPlatformType],
+        platformVersion: [platformVersion, setPlatformVersion],
+        applicationVersion: [applicationVersion, setApplicationVersion],
+        clientId: [clientId, setClientId]
     }
     return (
         <DataContext.Provider value={store}>
