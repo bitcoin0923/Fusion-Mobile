@@ -48,7 +48,7 @@ public class MainActivity extends ReactActivity {
   @Override
   protected void onCreate (Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    //requestIgnorePowerOptimization();
+    requestIgnorePowerOptimization();
     //requestDoNotDisturbPermissionOrSetDoNotDisturbApi23AndUp();
     //RingtoneManager.getRingtone().setAudioAttributes(AudioAttributes.USAGE_ALARM);
   }
